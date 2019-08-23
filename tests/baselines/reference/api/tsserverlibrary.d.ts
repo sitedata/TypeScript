@@ -8575,7 +8575,6 @@ declare namespace ts.server {
         private externalProjectRefCount;
         private projectErrors;
         private projectReferences;
-        protected isInitialLoadPending: () => boolean;
         fileExists(file: string): boolean;
         directoryExists(path: string): boolean;
         /**

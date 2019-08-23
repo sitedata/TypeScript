@@ -1058,6 +1058,8 @@ namespace ts.server {
             }
             else {
                 this.logConfigFileWatchUpdate(project.getConfigFilePath(), project.canonicalConfigFilePath, configFileExistenceInfo, ConfigFileWatcherStatus.ReloadingInferredRootFiles);
+                // Skip refresh if project is not yet loaded
+                if (project.isInitialLoadPending()) return;
                 project.pendingReload = ConfigFileProgramReloadLevel.Full;
                 project.pendingReloadReason = "Change in config file detected";
                 this.delayUpdateProjectGraph(project);
