@@ -1512,6 +1512,10 @@ namespace ts.server {
 
         private projectReferences: ReadonlyArray<ProjectReference> | undefined;
 
+        /** Potential project references before the project is actually loaded (read config file) */
+        /*@internal*/
+        potentialProjectReferences: Map<true> | undefined;
+
         /*@internal*/
         projectOptions?: ProjectOptions | true;
 
@@ -1630,12 +1634,13 @@ namespace ts.server {
 
         updateReferences(refs: ReadonlyArray<ProjectReference> | undefined) {
             this.projectReferences = refs;
+            this.potentialProjectReferences = undefined;
         }
 
         /*@internal*/
-        forEachResolvedProjectReference<T>(cb: (resolvedProjectReference: ResolvedProjectReference | undefined, resolvedProjectReferencePath: Path) => T | undefined): T | undefined {
-            const program = this.getCurrentProgram();
-            return program && program.forEachResolvedProjectReference(cb);
+        setPotentialProjectReference(canonicalConfigPath: NormalizedPath) {
+            Debug.assert(this.isInitialLoadPending());
+            (this.potentialProjectReferences || (this.potentialProjectReferences = createMap())).set(canonicalConfigPath, true);
         }
 
         /*@internal*/
